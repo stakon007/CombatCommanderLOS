@@ -112,8 +112,8 @@ function drawLine(hexA, hexB) {
   ctx.lineWidth = 1;
   ctx.strokeStyle = "white";
   ctx.beginPath();
-  ctx.lineTo(hexA.x+0.5, hexA.y);
-  ctx.lineTo(hexB.x+0.5, hexB.y);
+  ctx.lineTo(hexA.x + 0.5, hexA.y);
+  ctx.lineTo(hexB.x + 0.5, hexB.y);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
@@ -226,4 +226,41 @@ function getHexesDistance(hexA, hexB) {
   var b = hexA.y - hexB.y;
 
   return Math.sqrt(a * a + b * b);
+}
+
+//Returns the visibility data of all hexes in json format
+export function getVisibilityJson() {
+
+  var hexVisibilityData = [];
+
+  hexes.forEach((hex) => {
+   var visibleHexes = [];
+    hex.visibleHexes.forEach((v)=>{
+      visibleHexes.push(`${v.column + v.row}`);
+    })
+    var item = { "name": `${hex.column + hex.row}`, "visibility": visibleHexes };
+    hexVisibilityData.push(item);
+  });
+
+  console.log(JSON.stringify(hexVisibilityData));
+  
+  return hexVisibilityData;
+  /*
+{ "hexes":[
+    {
+     "name": "A1",
+     "visibility": ["A2","A3","A4"] 
+    },
+    {
+     "name": "A2",
+     "visibility": ["A1","A3","B2"] 
+    },    
+...
+  ]
+}
+
+
+  */
+
+
 }

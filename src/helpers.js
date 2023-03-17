@@ -8,7 +8,7 @@ export class JavascriptDataDownloader {
     download (type_of = "text/plain", filename= this.filename) {
         let body = document.body;
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(new Blob([JSON.stringify(this.data, null, 2)], {
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(this.data, null, 1)], {
             type: type_of
         }));
         a.setAttribute("download", filename);

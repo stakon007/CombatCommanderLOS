@@ -1,4 +1,4 @@
-import { addHex, clearHexes, drawHexes, lockHex, setDefaultVisibility } from "./hex.js";
+import { addHex, clearHexes, drawHexes, lockHex, setDefaultVisibility, getVisibilityJson } from "./hex.js";
 import { JavascriptDataDownloader } from "./helpers.js";
 
 const canvasElement = document.getElementById("canvas");
@@ -25,8 +25,7 @@ function initialize() {
     const image = document.createElement("img");
     image.src = await fileToDataUri(file);
     loadedImage = image;
-    // enabling the brush after after the image
-    // has been uploaded
+
     image.addEventListener("load", () => {
       drawOnImage(image);
     });
@@ -58,7 +57,7 @@ function initialize() {
 
   const exportVisibility = document.getElementById("exportVisibility");
   exportVisibility.onclick = () => {
-    new JavascriptDataDownloader({ "greetings": "Hello World" }, "exportData.json").download();
+    new JavascriptDataDownloader(getVisibilityJson(), "exportData.json").download();
   };
 
   loadInitialFile();
@@ -73,7 +72,7 @@ function loadInitialFile() {
     context.drawImage(img, 0, 0);
     drawGrid(canvas.width, canvas.height);
   };
-  img.src = '../img/01.png';
+  img.src = '../img/europe/01.png';
 }
 
 function fileToDataUri(field) {
