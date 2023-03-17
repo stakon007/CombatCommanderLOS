@@ -17,7 +17,30 @@ const a = (2 * Math.PI) / 6;
 
 initialize();
 
+function initializeMapMenu() {
+  const onClick = function () {
+    console.log(this.id, this.innerHTML);
+
+    if (this.id[0] == "E") {
+      var imagePath = `../img/europe/${this.id.substring(1)}.png`
+      loadInitialFile(imagePath);
+    }
+  }
+
+  for (let i = 1; i < 13; i++) {
+    var id = `E0${i}`;
+    if (i >= 10)
+      id = `E${i}`;
+
+    document.getElementById(id).onclick = onClick;
+  }
+}
+
+
 function initialize() {
+
+  initializeMapMenu();
+
   fileInput.addEventListener("change", async (e) => {
     const [file] = fileInput.files;
 
@@ -61,10 +84,10 @@ function initialize() {
   };
 
   loadInitialFile();
-  
+
 }
 
-function loadInitialFile() {
+function loadInitialFile(imagePath) {
   var img = new Image();
   img.onload = function () {
     //drawOnImage(img);
@@ -72,7 +95,9 @@ function loadInitialFile() {
     context.drawImage(img, 0, 0);
     drawGrid(canvas.width, canvas.height);
   };
-  img.src = '../img/europe/01.png';
+  if (!imagePath)
+    imagePath = '../img/europe/01.png'
+  img.src = imagePath;
 }
 
 function fileToDataUri(field) {
