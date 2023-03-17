@@ -1,10 +1,11 @@
-import { addHex, clearHexes, drawHexes, lockHex, setDefaultVisibility, getVisibilityJson } from "./hex.js";
+import { addHex, clearHexes, drawHexes, lockHex, setDefaultVisibility, getVisibilityJson, setVisibilityFromJson } from "./hex.js";
 import { JavascriptDataDownloader } from "./helpers.js";
 
 const canvasElement = document.getElementById("canvas");
 const context = canvasElement.getContext("2d");
 
 const fileInput = document.querySelector("#upload");
+const importFile = document.querySelector("#import");
 let loadedImage = null;
 
 const countElement = document.getElementById("clickedCounter");
@@ -56,6 +57,16 @@ function initialize() {
     return false;
   });
 
+  importFile.addEventListener("change", async (e) => {
+    const [file] = importFile.files;
+
+    // load the json visibility data
+    var jsonFile = await fileToText(file);
+    
+    setVisibilityFromJson(jsonFile);
+    return false;
+  });
+
   const clearElement = document.getElementById("clear");
   clearElement.onclick = () => {
     countElement.innerText = ++count;
@@ -83,6 +94,11 @@ function initialize() {
     new JavascriptDataDownloader(getVisibilityJson(), "exportData.json").download();
   };
 
+  // const importVisibility = document.getElementById("importVisibility");
+  // importVisibility.onclick = () => {
+    
+  // };
+
   loadInitialFile();
 
 }
@@ -109,6 +125,18 @@ function fileToDataUri(field) {
     });
 
     reader.readAsDataURL(field);
+  });
+}
+
+function fileToText(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      resolve(reader.result);
+    });
+
+    reader.readAsText(file);
   });
 }
 

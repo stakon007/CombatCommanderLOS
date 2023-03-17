@@ -67,6 +67,7 @@ function Hex(x, y, radius, color, row = "", column = "") {
   this.row = row;
   this.column = column;
   this.visibleHexes = [];
+  this.name = `${this.column + this.row}`;
 }
 
 export function drawHexes() {
@@ -234,16 +235,16 @@ export function getVisibilityJson() {
   var hexVisibilityData = [];
 
   hexes.forEach((hex) => {
-   var visibleHexes = [];
-    hex.visibleHexes.forEach((v)=>{
+    var visibleHexes = [];
+    hex.visibleHexes.forEach((v) => {
       visibleHexes.push(`${v.column + v.row}`);
     })
     var item = { "name": `${hex.column + hex.row}`, "visibility": visibleHexes };
     hexVisibilityData.push(item);
   });
 
-  console.log(JSON.stringify(hexVisibilityData));
-  
+  //console.log(JSON.stringify(hexVisibilityData));
+
   return hexVisibilityData;
   /*
 { "hexes":[
@@ -258,9 +259,23 @@ export function getVisibilityJson() {
 ...
   ]
 }
-
-
   */
+}
 
+//sets the visibility data of every hex included in the incoming json
+export function setVisibilityFromJson(jsonData) {
 
+  const obj = JSON.parse(jsonData);
+
+  obj.forEach(item => {
+    var hex = hexes.find(x => x.name == item.name);
+    if (hex) {
+      hex.visibleHexes = [];
+      item.visibility.forEach(v => {
+        var h = hexes.find(x => x.name == v);
+        hex.visibleHexes.push(h);
+      }
+      )
+    }
+  });
 }
