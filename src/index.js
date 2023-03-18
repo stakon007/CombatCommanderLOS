@@ -23,7 +23,7 @@ function initializeMapMenu() {
     console.log(this.id, this.innerHTML);
 
     if (this.id[0] == "E") {
-      var imagePath = `../CombatCommanderLOS/img/europe/${this.id.substring(1)}.png`
+      var imagePath = `img/europe/${this.id.substring(1)}.png`
       loadInitialFile(imagePath);
     }
   }
@@ -111,9 +111,9 @@ function loadInitialFile(imagePath) {
     context.drawImage(img, 0, 0);
     drawGrid(canvas.width, canvas.height);
   };
-  console.log("testing github pages.. " + imagePath);
+
   if (!imagePath)
-    imagePath = './../CombatCommanderLOS/img/europe/01.png'
+    imagePath = 'img/europe/01.png'
   img.src = imagePath;
 }
 
