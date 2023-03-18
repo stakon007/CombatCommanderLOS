@@ -112,7 +112,7 @@ function loadInitialFile(imagePath) {
     drawGrid(canvas.width, canvas.height);
   };
   if (!imagePath)
-    imagePath = '../img/europe/01.png'
+    imagePath = '../img/europe/CombatCommanderLOS/01.png'
   img.src = imagePath;
 }
 
