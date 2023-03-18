@@ -23,7 +23,7 @@ function initializeMapMenu() {
     console.log(this.id, this.innerHTML);
 
     if (this.id[0] == "E") {
-      var imagePath = `../img/europe/${this.id.substring(1)}.png`
+      var imagePath = `../img/europe/CombatCommanderLOS/${this.id.substring(1)}.png`
       loadInitialFile(imagePath);
     }
   }
