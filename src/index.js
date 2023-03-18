@@ -111,7 +111,7 @@ function loadInitialFile(imagePath) {
     context.drawImage(img, 0, 0);
     drawGrid(canvas.width, canvas.height);
   };
-  console.log(imagePath);
+  console.log("testing github pages.. " + imagePath);
   if (!imagePath)
     imagePath = './../CombatCommanderLOS/img/europe/01.png'
   img.src = imagePath;
