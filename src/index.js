@@ -111,6 +111,7 @@ function loadInitialFile(imagePath) {
     context.drawImage(img, 0, 0);
     drawGrid(canvas.width, canvas.height);
   };
+  console.log(imagePath);
   if (!imagePath)
     imagePath = '../img/europe/CombatCommanderLOS/01.png'
   img.src = imagePath;
