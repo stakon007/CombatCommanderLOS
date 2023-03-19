@@ -4,6 +4,8 @@ const selHex = document.getElementById("selHex");
 const lHex = document.getElementById("lockedHex");
 const lockButton = document.getElementById("visibility");
 const details = document.getElementById("details");
+const checkBox = document.getElementById("showLOS");
+
 let hexes = [];
 
 const state = {
@@ -12,22 +14,7 @@ const state = {
   },
   set selectedHex(hex) {
     this._selectedHex = hex;
-    var txt = hex?.name ? `Lock the selected hex to calculate LOS` : "Select a hex to display visibillity.";
-    var extraTxt = this._showLOS?"Right click to toggle visibility":"";
-    if (this._lockedHex)
-      txt = this._lockedHex?.name ? `Left click another hex to draw LOS. ${extraTxt}` : "";
-
-    helpText.innerHTML = `${txt}`;
-    selHex.innerHTML = hex?.name ? `${hex.name}` : "None";
-
-    if (this._selectedHex == null && this._lockedHex == null) {
-      lockButton.style.display = 'none';
-      details.style.display = 'none';
-    }
-    else{
-      lockButton.style.display = 'block';
-      details.style.display = 'block';
-    }
+    updateDOM();
   },
   _selectedHex: null,
 
@@ -36,9 +23,7 @@ const state = {
   },
   set lockedHex(hex) {
     this._lockedHex = hex;
-    var txt = hex ? `Unlock Selected Hex` : "Lock Selected Hex";
-    lockButton.innerHTML = `${txt}`;
-    lHex.innerHTML = hex?.name ? `${hex.name}` : "None";
+    updateDOM();
   },
   _lockedHex: null,
   get showLOS() {
@@ -46,6 +31,7 @@ const state = {
   },
   set showLOS(show) {
     this._showLOS = show;
+    updateDOM();
   },
   _showLOS: false,
 }
@@ -94,6 +80,8 @@ export function lockHex() {
     if (state.selectedHex)
       state.selectedHex.isSelected = false;
     state.selectedHex = null;
+    checkBox.checked = false;
+    state.showLOS = false;
   } else if (state.selectedHex) {
     state.lockedHex = state.selectedHex;
     state.selectedHex.isLocked = true;
@@ -248,7 +236,7 @@ function canvasRightClick(e) {
   }
 }
 
-var checkBox = document.getElementById("showLOS");
+
 checkBox.onclick = () => { toggleLOS(); }
 export function toggleLOS() {
   state.showLOS = checkBox.checked;
@@ -349,4 +337,35 @@ export function setVisibilityFromJson(jsonData) {
       )
     }
   });
+}
+
+
+//updates the DOM based on the current state
+function updateDOM() {
+
+  //Update help text
+  var txt = state.selectedHex?.name ? `Lock the selected hex to calculate LOS` : "Select a hex to display visibillity.";
+  var extraTxt = state.showLOS ? "Right click on other hexes to toggle visibility" : "";
+
+  if (state.lockedHex)
+    txt = state.lockedHex?.name ? `Left click on other hexes to draw LOS.<br> ${extraTxt}` : "";
+
+  helpText.innerHTML = `${txt}`;
+  selHex.innerHTML = state.selectedHex?.name ? `${state.selectedHex.name}` : "None";
+
+  //set elements visibility
+  if (state.selectedHex == null && state.lockedHex == null) {
+    lockButton.style.display = 'none';
+    details.style.display = 'none';
+  }
+  else {
+    lockButton.style.display = 'block';
+    details.style.display = 'block';
+  }
+
+  //update locked text
+  txt = state.lockedHex ? `Unlock Hex` : "Lock Selected Hex";
+  lockButton.innerHTML = `${txt}`;
+  lHex.innerHTML = state.lockedHex?.name ? `${state.lockedHex.name}` : "None";
+
 }
