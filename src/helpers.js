@@ -20,3 +20,29 @@ export class JavascriptDataDownloader {
 
 //usage
 //new JavascriptDataDownloader({"greetings": "Hello World"}).download();
+
+//read the bytes out of a file to be used as image data.
+export function fileToDataUri(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+  
+      reader.addEventListener("load", () => {
+        resolve(reader.result);
+      });
+  
+      reader.readAsDataURL(file);
+    });
+  }
+
+  //read the text out of a file
+ export function fileToText(file) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+  
+      reader.addEventListener("load", () => {
+        resolve(reader.result);
+      });
+  
+      reader.readAsText(file);
+    });
+  }

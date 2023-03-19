@@ -6,12 +6,13 @@ const canvasElement = document.getElementById("canvas");
 const ctx = canvasElement.getContext("2d");
 const a = (2 * Math.PI) / 6;
 
+//Empties the hexes array and sets the selected/locked vars to null
 export function clearHexes() {
   selectedHex = null;
   lockedHex = null;
   hexes = [];
 }
-
+//adds a new Hex in the hex array
 export function addHex(radius, x, y, row = "", column = "") {
   let color = "brown";
   let hex = new Hex(x, y, radius, color, row, column);
@@ -32,12 +33,10 @@ export function setDefaultVisibility() {
       var distance = getHexesDistance(hexA, hexB);
       if (Math.sqrt(3) * hexA.radius * 1.1 >= distance)
         updateReciprocalVisibility(hexA, hexB);
-
     }
-
   }
 }
-
+//locks the selected hex or unlocks the locked hex
 export function lockHex() {
   if (lockedHex) {
     //unlock if already locked
@@ -56,7 +55,7 @@ export function lockHex() {
 
   redrawCanvas();
 }
-
+//the Hex definition
 function Hex(x, y, radius, color, row = "", column = "") {
   this.x = x;
   this.y = y;
@@ -69,7 +68,7 @@ function Hex(x, y, radius, color, row = "", column = "") {
   this.visibleHexes = [];
   this.name = `${this.column + this.row}`;
 }
-
+//draws on the canvas all hexes in the hexes array
 export function drawHexes() {
 
   for (let i = 0; i < hexes.length; i++) {
@@ -107,7 +106,7 @@ export function drawHexes() {
     drawLine(lockedHex, selectedHex);
   }
 }
-
+//draw a line between two hexes' centers
 function drawLine(hexA, hexB) {
   ctx.globalAlpha = 1.0;
   ctx.lineWidth = 1;
@@ -119,7 +118,7 @@ function drawLine(hexA, hexB) {
   ctx.fill();
   ctx.stroke();
 }
-
+//Set event handlers for right and left click
 window.onload = () => {
   canvas.onclick = canvasClick;
   canvasElement.addEventListener("contextmenu", (ev) => {
@@ -128,7 +127,7 @@ window.onload = () => {
     return false;
   });
 };
-
+//Hit test to find the clicked hex and mark it as selected
 function canvasClick(e) {
   let clickX = e.pageX - canvas.offsetLeft;
   let clickY = e.pageY - canvas.offsetTop;
@@ -149,7 +148,6 @@ function canvasClick(e) {
 
       selectedHex = hex;
       hex.isSelected = true;
-      console.log(`Selected hex: ${hex.column}${hex.row}`);
 
       redrawCanvas();
 
@@ -157,10 +155,11 @@ function canvasClick(e) {
     }
   }
 }
-
+//Hit test to find the clicked hex and add it to the visibility array of the  selected hex
 function canvasRightClick(e) {
   //only works wwhen a hex is locked
-  if (!lockedHex) return;
+  if (!lockedHex)
+    return;
 
   let clickX = e.pageX - canvas.offsetLeft;
   let clickY = e.pageY - canvas.offsetTop;
@@ -169,12 +168,10 @@ function canvasRightClick(e) {
     let hex = hexes[i];
 
     let distanceFromCenter = Math.sqrt(
-      Math.pow(hex.x - clickX, 2) + Math.pow(hex.y - clickY, 2)
-    );
+      Math.pow(hex.x - clickX, 2) + Math.pow(hex.y - clickY, 2));
 
     if (distanceFromCenter <= hex.radius) {
       updateReciprocalVisibility(lockedHex, hex);
-      console.log(`updated to visibility list: ${hex.column}${hex.row}`);
       listVisibleHexes(lockedHex);
 
       redrawCanvas();
@@ -194,7 +191,8 @@ function updateVisibility(mainHex, hex) {
   if (index > -1) {
     // only splice array when item is found
     mainHex.visibleHexes.splice(index, 1); // 2nd parameter means remove one item only
-  } else mainHex.visibleHexes.push(hex);
+  } 
+  else mainHex.visibleHexes.push(hex);
 }
 
 /**
@@ -229,7 +227,7 @@ function getHexesDistance(hexA, hexB) {
   return Math.sqrt(a * a + b * b);
 }
 
-//Returns the visibility data of all hexes in json format
+//Returns the visibility data of all hexes 
 export function getVisibilityJson() {
 
   var hexVisibilityData = [];
@@ -242,8 +240,6 @@ export function getVisibilityJson() {
     var item = { "name": `${hex.column + hex.row}`, "visibility": visibleHexes };
     hexVisibilityData.push(item);
   });
-
-  //console.log(JSON.stringify(hexVisibilityData));
 
   return hexVisibilityData;
   /*
@@ -265,6 +261,8 @@ export function getVisibilityJson() {
 //sets the visibility data of every hex included in the incoming json
 export function setVisibilityFromJson(jsonData) {
 
+  if (!hexes || hexes.length == 0)
+    return;
   const obj = JSON.parse(jsonData);
 
   obj.forEach(item => {
