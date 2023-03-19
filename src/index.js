@@ -3,6 +3,7 @@ import { fileToDataUri,fileToText,JavascriptDataDownloader } from "./helpers.js"
 
 const canvasElement = document.getElementById("canvas");
 const context = canvasElement.getContext("2d");
+var currentMapId = "";
 let loadedImage = null;
 
 initializeEvents();
@@ -17,7 +18,7 @@ function initializeEvents() {
   function initializeMapMenu() {
     const onClick = function () {
       console.log(this.id, this.innerHTML);
-
+      currentMapId = this.id;
       if (this.id[0] == "E") {
         var imagePath = `img/europe/${this.id.substring(1)}.png`
         resetCanvas(imagePath);
@@ -86,7 +87,7 @@ function initializeEvents() {
   //On click --> saves current visibility data of all hexes into a json file.
   const exportVisibility = document.getElementById("exportVisibility");
   exportVisibility.onclick = () => {
-    new JavascriptDataDownloader(getVisibilityJson(), "exportData.json").download();
+    new JavascriptDataDownloader(getVisibilityJson(), `${currentMapId}.json`).download();
   };
 
 }
@@ -100,8 +101,10 @@ function resetCanvas(imagePath) {
     resetGrid(canvas.width, canvas.height);
   };
 
-  if (!imagePath)
+  if (!imagePath){
     imagePath = 'img/europe/01.png'
+    currentMapId = "E01";
+  }
   img.src = imagePath;
 
   var checkBox = document.getElementById("showLOS");
