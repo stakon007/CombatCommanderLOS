@@ -49,18 +49,19 @@
         </div>
       </div>
             
-      <div style="margin-top: 5px">
+      <div style="margin-top: 5px;display: none;">
         <button id="clear">Clear</button>
         <button id="draw">Draw Grid</button>
-        <button id="visibility">Calculate Visibility</button>
+        <input id="upload" type="file" accept="image/*" />
       </div>
-      <br />
-      <input id="upload" type="file" accept="image/*" />
-      <br />
+      
+      <div id="helpText"></div>
+      <button id="visibility">Lock Selected Hex</button>
+      <br/>
+      <br/>
       <button id="exportVisibility">Export visibility data</button>
       <label for="import" id="import-label" class="btn-label">Import visibility data</label>
       <input name="import-label" id="import" type="file" accept="application/JSON" style="display: none;"></input>
-      <div id="clickedCounter">0</div>
 
     </div>
   </div>

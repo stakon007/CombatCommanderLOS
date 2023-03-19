@@ -1,15 +1,46 @@
 import { redrawCanvas } from "./index.js";
+const helpText = document.getElementById("helpText");
+const lockButton = document.getElementById("visibility");
 let hexes = [];
-let selectedHex = null;
-let lockedHex = null;
+
+const state = {
+  get selectedHex() {
+    return this._selectedHex;
+  },
+  set selectedHex(hex) {
+    this._selectedHex = hex;
+    var txt = hex?.name ? `Selected Hex: ${hex.name} Lock the selected hex to edit visibility ` : "Select a hex to display visibillity.";
+    if (this._lockedHex)
+      txt = this._lockedHex?.name ? `Locked Hex: ${this._lockedHex.name} Left click another hex to draw LOS. Right click to toggle visibility` : "";
+    
+      helpText.innerHTML = `${txt}`;
+    
+    if (this._selectedHex == null && this._lockedHex == null)
+      lockButton.style.display = 'none';
+    else
+      lockButton.style.display = 'block';
+  },
+  _selectedHex: null,
+
+  get lockedHex() {
+    return this._lockedHex;
+  },
+  set lockedHex(hex) {
+    this._lockedHex = hex;
+    var txt = hex? `Unlock Selected Hex` : "Lock Selected Hex";
+    lockButton.innerHTML = `${txt}`;
+  },
+  _lockedHex: null,
+}
+
 const canvasElement = document.getElementById("canvas");
 const ctx = canvasElement.getContext("2d");
 const a = (2 * Math.PI) / 6;
 
 //Empties the hexes array and sets the selected/locked vars to null
 export function clearHexes() {
-  selectedHex = null;
-  lockedHex = null;
+  state.lockedHex = null;
+  state.selectedHex = null;
   hexes = [];
 }
 //adds a new Hex in the hex array
@@ -38,19 +69,18 @@ export function setDefaultVisibility() {
 }
 //locks the selected hex or unlocks the locked hex
 export function lockHex() {
-  if (lockedHex) {
+  if (state.lockedHex) {
     //unlock if already locked
-    lockedHex.isLocked = false;
-    lockedHex = null;
-    if (selectedHex) {
-      selectedHex.isSelected = false;
-      selectedHex = null;
-    }
-  } else if (selectedHex) {
-    lockedHex = selectedHex;
-    selectedHex.isLocked = true;
-    selectedHex.isSelected = false;
-    selectedHex = null;
+    state.lockedHex.isLocked = false;
+    state.lockedHex = null;
+    if (state.selectedHex) 
+      state.selectedHex.isSelected = false;
+    state.selectedHex = null;
+  } else if (state.selectedHex) {
+    state.lockedHex = state.selectedHex;
+    state.selectedHex.isLocked = true;
+    state.selectedHex.isSelected = false;
+    state.selectedHex = null;
   } else return;
 
   redrawCanvas();
@@ -75,9 +105,9 @@ export function drawHexes() {
     let hex = hexes[i];
 
     ctx.globalAlpha = 0.2;
-    if (lockedHex && lockedHex.visibleHexes.find((x) => x == hex))
+    if (state.lockedHex && state.lockedHex.visibleHexes.find((x) => x == hex))
       ctx.fillStyle = "green";
-    else if (!lockedHex && selectedHex && selectedHex.visibleHexes.find((x) => x == hex))
+    else if (!state.lockedHex && state.selectedHex && state.selectedHex.visibleHexes.find((x) => x == hex))
       ctx.fillStyle = "green";
     else
       ctx.fillStyle = hex.color;
@@ -102,8 +132,8 @@ export function drawHexes() {
   }
 
   //a hex is locked, draw a line from it to the selected hex
-  if (lockedHex && selectedHex) {
-    drawLine(lockedHex, selectedHex);
+  if (state.lockedHex && state.selectedHex) {
+    drawLine(state.lockedHex, state.selectedHex);
   }
 }
 //draw a line between two hexes' centers
@@ -142,11 +172,11 @@ function canvasClick(e) {
     if (distanceFromCenter <= hex.radius) {
       if (hex.isLocked) return;
 
-      if (selectedHex != null) {
-        selectedHex.isSelected = false;
+      if (state.selectedHex != null) {
+        state.selectedHex.isSelected = false;
       }
 
-      selectedHex = hex;
+      state.selectedHex = hex;
       hex.isSelected = true;
 
       redrawCanvas();
@@ -158,7 +188,7 @@ function canvasClick(e) {
 //Hit test to find the clicked hex and add it to the visibility array of the  selected hex
 function canvasRightClick(e) {
   //only works wwhen a hex is locked
-  if (!lockedHex)
+  if (!state.lockedHex)
     return;
 
   let clickX = e.pageX - canvas.offsetLeft;
@@ -171,8 +201,8 @@ function canvasRightClick(e) {
       Math.pow(hex.x - clickX, 2) + Math.pow(hex.y - clickY, 2));
 
     if (distanceFromCenter <= hex.radius) {
-      updateReciprocalVisibility(lockedHex, hex);
-      listVisibleHexes(lockedHex);
+      updateReciprocalVisibility(state.lockedHex, hex);
+      listVisibleHexes(state.lockedHex);
 
       redrawCanvas();
 
@@ -191,7 +221,7 @@ function updateVisibility(mainHex, hex) {
   if (index > -1) {
     // only splice array when item is found
     mainHex.visibleHexes.splice(index, 1); // 2nd parameter means remove one item only
-  } 
+  }
   else mainHex.visibleHexes.push(hex);
 }
 
