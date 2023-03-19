@@ -103,6 +103,9 @@ function resetCanvas(imagePath) {
   if (!imagePath)
     imagePath = 'img/europe/01.png'
   img.src = imagePath;
+
+  var checkBox = document.getElementById("showLOS");
+  checkBox.checked = false;
 }
 //draws the given image on the canvas
 function drawImageOnCanvas(image = null) {

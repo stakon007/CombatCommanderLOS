@@ -11,8 +11,8 @@
       <canvas id="canvas" width="1256" height="1001" style="border: 1px solid black; margin-top: 10px"></canvas>
     </div>
 
-    
-    <div class="side-controls" style="margin-left: 10px;">
+
+    <div class="side-controls" style="margin-left: 10px;white-space: nowrap;">
 
       <div class="dropdown">
         <button class="dropbtn">Europe</button>
@@ -48,20 +48,30 @@
           <a href="#" id="P12">Map 12: Slopes of Hell</a>
         </div>
       </div>
-            
+
+      <div class="gap"></div>
+
       <div style="margin-top: 5px;display: none;">
         <button id="clear">Clear</button>
         <button id="draw">Draw Grid</button>
         <input id="upload" type="file" accept="image/*" />
       </div>
-      
-      <div id="helpText"></div>
-      <button id="visibility">Lock Selected Hex</button>
-      <br/>
-      <br/>
-      <button id="exportVisibility">Export visibility data</button>
-      <label for="import" id="import-label" class="btn-label">Import visibility data</label>
-      <input name="import-label" id="import" type="file" accept="application/JSON" style="display: none;"></input>
+
+      <div id="helpText" style="margin-top: 10px;font-weight: bold;"></div>
+
+      <div id="details" style="margin-top: 25px;">
+        <div><button id="visibility" style="float:left;">Lock Selected Hex</button> <input type="checkbox"
+            id="showLOS" style="margin-left: 40px;">Show/Edit visible Hexes</input></div>
+        <br />
+        <div>Locked Hex: <span id="lockedHex" class="lockedHex"></span> </div>
+        <div>Selected Hex: <span id="selHex" class="selectedHex"></span> </div>
+        <input type="checkbox" id="showLOS">Show/Edit visible Hexes</input>
+        <br />
+        <br />
+        <button id="exportVisibility">Export LOS</button>
+        <label for="import" id="import-label" class="btn-label">Import LOS</label>
+        <input name="import-label" id="import" type="file" accept="application/JSON" style="display: none;"></input>
+      </div>
 
     </div>
   </div>

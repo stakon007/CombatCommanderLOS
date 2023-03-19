@@ -1,6 +1,9 @@
 import { redrawCanvas } from "./index.js";
 const helpText = document.getElementById("helpText");
+const selHex = document.getElementById("selHex");
+const lHex = document.getElementById("lockedHex");
 const lockButton = document.getElementById("visibility");
+const details = document.getElementById("details");
 let hexes = [];
 
 const state = {
@@ -9,16 +12,22 @@ const state = {
   },
   set selectedHex(hex) {
     this._selectedHex = hex;
-    var txt = hex?.name ? `Selected Hex: ${hex.name} Lock the selected hex to edit visibility ` : "Select a hex to display visibillity.";
+    var txt = hex?.name ? `Lock the selected hex to calculate LOS` : "Select a hex to display visibillity.";
+    var extraTxt = this._showLOS?"Right click to toggle visibility":"";
     if (this._lockedHex)
-      txt = this._lockedHex?.name ? `Locked Hex: ${this._lockedHex.name} Left click another hex to draw LOS. Right click to toggle visibility` : "";
-    
-      helpText.innerHTML = `${txt}`;
-    
-    if (this._selectedHex == null && this._lockedHex == null)
+      txt = this._lockedHex?.name ? `Left click another hex to draw LOS. ${extraTxt}` : "";
+
+    helpText.innerHTML = `${txt}`;
+    selHex.innerHTML = hex?.name ? `${hex.name}` : "None";
+
+    if (this._selectedHex == null && this._lockedHex == null) {
       lockButton.style.display = 'none';
-    else
+      details.style.display = 'none';
+    }
+    else{
       lockButton.style.display = 'block';
+      details.style.display = 'block';
+    }
   },
   _selectedHex: null,
 
@@ -27,10 +36,18 @@ const state = {
   },
   set lockedHex(hex) {
     this._lockedHex = hex;
-    var txt = hex? `Unlock Selected Hex` : "Lock Selected Hex";
+    var txt = hex ? `Unlock Selected Hex` : "Lock Selected Hex";
     lockButton.innerHTML = `${txt}`;
+    lHex.innerHTML = hex?.name ? `${hex.name}` : "None";
   },
   _lockedHex: null,
+  get showLOS() {
+    return this._showLOS;
+  },
+  set showLOS(show) {
+    this._showLOS = show;
+  },
+  _showLOS: false,
 }
 
 const canvasElement = document.getElementById("canvas");
@@ -42,6 +59,7 @@ export function clearHexes() {
   state.lockedHex = null;
   state.selectedHex = null;
   hexes = [];
+  state.showLOS = false;
 }
 //adds a new Hex in the hex array
 export function addHex(radius, x, y, row = "", column = "") {
@@ -73,7 +91,7 @@ export function lockHex() {
     //unlock if already locked
     state.lockedHex.isLocked = false;
     state.lockedHex = null;
-    if (state.selectedHex) 
+    if (state.selectedHex)
       state.selectedHex.isSelected = false;
     state.selectedHex = null;
   } else if (state.selectedHex) {
@@ -122,12 +140,31 @@ export function drawHexes() {
       );
     }
 
-    if (hex.isSelected) ctx.lineWidth = 5;
-    else if (hex.isLocked) ctx.lineWidth = 8;
+    if (hex.isSelected) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "blue";
+      ctx.globalAlpha = 0.8;
+      ctx.closePath();
+      ctx.stroke();
+      if (state.showLOS && lockedHex) {
+        ctx.globalAlpha = 0.2;
+        ctx.fill();
+      }
+      continue;
+    }
+    else if (hex.isLocked) {
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = "red";
+      ctx.globalAlpha = 0.8;
+      ctx.closePath();
+      ctx.stroke();
+      continue;
+    }
     else ctx.lineWidth = 1;
 
     ctx.closePath();
-    ctx.fill();
+    if (state.showLOS)
+      ctx.fill();
     ctx.stroke();
   }
 
@@ -187,8 +224,8 @@ function canvasClick(e) {
 }
 //Hit test to find the clicked hex and add it to the visibility array of the  selected hex
 function canvasRightClick(e) {
-  //only works wwhen a hex is locked
-  if (!state.lockedHex)
+  //only works wwhen a hex is locked and show LOS is enabled
+  if (!state.lockedHex || !state.showLOS)
     return;
 
   let clickX = e.pageX - canvas.offsetLeft;
@@ -211,6 +248,12 @@ function canvasRightClick(e) {
   }
 }
 
+var checkBox = document.getElementById("showLOS");
+checkBox.onclick = () => { toggleLOS(); }
+export function toggleLOS() {
+  state.showLOS = checkBox.checked;
+  redrawCanvas();
+}
 /**
  * @param mainHex {Hex}
  * @param hex {Hex}
