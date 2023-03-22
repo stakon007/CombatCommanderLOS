@@ -74,14 +74,13 @@ export function setDefaultVisibility() {
 //locks the selected hex or unlocks the locked hex
 export function lockHex() {
   if (state.lockedHex) {
-    //unlock if already locked
-    state.lockedHex.isLocked = false;
-    state.lockedHex = null;
+    //unlock if already locked and just selects it
     if (state.selectedHex)
-      state.selectedHex.isSelected = false;
-    state.selectedHex = null;
-    checkBox.checked = false;
-    state.showLOS = false;
+    state.selectedHex.isSelected = false;
+    state.lockedHex.isLocked = false;
+    state.selectedHex = state.lockedHex;
+    state.selectedHex.isSelected = true;
+    state.lockedHex = null;
   } else if (state.selectedHex) {
     state.lockedHex = state.selectedHex;
     state.selectedHex.isLocked = true;
