@@ -1,5 +1,5 @@
-import { addHex, clearHexes, drawHexes, lockHex, setDefaultVisibility, getVisibilityJson, setVisibilityFromJson } from "./hex.js";
-import { fileToDataUri,fileToText,JavascriptDataDownloader } from "./helpers.js";
+import { addHex, clearHexes, drawHexes, lockHex, setDefaultVisibility, getVisibilityJson, setVisibilityFromJson, massLosToggle } from "./hex.js";
+import { fileToDataUri, fileToText, JavascriptDataDownloader } from "./helpers.js";
 
 const canvasElement = document.getElementById("canvas");
 const context = canvasElement.getContext("2d");
@@ -90,6 +90,12 @@ function initializeEvents() {
     new JavascriptDataDownloader(getVisibilityJson(), `${currentMapId}.json`).download();
   };
 
+  //On click --> Enables/disables mass LOS editing
+  const massLossToggle = document.getElementById("massLos");
+  massLossToggle.onclick = () => {
+    massLosToggle();
+  };
+
 }
 //A new image and a new grid are drawn on the canvas
 function resetCanvas(imagePath) {
@@ -101,15 +107,27 @@ function resetCanvas(imagePath) {
     resetGrid(canvas.width, canvas.height);
   };
 
-  if (!imagePath){
+  if (!imagePath) {
     imagePath = 'img/europe/01.png'
     currentMapId = "E01";
+    loadLosFromFile('../data/E01.json');
   }
   img.src = imagePath;
 
   var checkBox = document.getElementById("showLOS");
   checkBox.checked = false;
 }
+
+function loadLosFromFile(fileToLoad) {
+  fetch(fileToLoad)
+    .then((res) => res.text())
+    .then((data) => {
+      setVisibilityFromJson(data);
+
+    });
+}
+
+
 //draws the given image on the canvas
 function drawImageOnCanvas(image = null) {
   // if an image is present it is drawn in the canvas

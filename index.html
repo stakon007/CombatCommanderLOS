@@ -64,7 +64,7 @@
           <a href="#" id="M11">Map 11: No-Man's Land</a>
           <a href="#" id="M12">Map 12: Six Hills</a>
         </div>
-      </div>    
+      </div>
       <div class="dropdown">
         <button class="dropbtn">Resistance (N/A)</button>
         <div class="dropdown-content">
@@ -81,7 +81,7 @@
           <a href="#" id="M11">Map 11: Thunderstorm</a>
           <a href="#" id="M12">Map 12: No Quarter</a>
         </div>
-      </div>         
+      </div>
 
       <div class="gap"></div>
 
@@ -91,19 +91,25 @@
         <input id="upload" type="file" accept="image/*" />
       </div>
 
-      <div id="helpText" class ="helpText"></div>
-      <div class="gap"></div>
+      <div id="helpText" class="helpText"></div>
+
       <div id="details" style="margin-top: 25px;">
-        <div><button id="visibility" style="float:left;">Lock Selected Hex</button> <input type="checkbox"
-            id="showLOS" style="margin-left: 40px;">Show/Edit visible Hexes</input></div>
-        <br />
+        <div><button id="visibility" style="float:left;">Lock Selected Hex</button> <input type="checkbox" id="showLOS"
+            style="margin-left: 40px;">Show/Edit visible Hexes</input></div>
+        <br /><br />
         <div>Locked Hex: <span id="lockedHex" class="lockedHex"></span> </div>
         <div>Selected Hex: <span id="selHex" class="selectedHex"></span> </div>
         <br />
         <br />
+        <div class="gap"></div>
         <button id="exportVisibility">Export LOS</button>
         <label for="import" id="import-label" class="btn-label">Import LOS</label>
+        <br />
         <input name="import-label" id="import" type="file" accept="application/JSON" style="display: none;"></input>
+
+        <br><br />
+        <div><button id="massLos" style="float:left;">Mass Select LOS</button></div>
+
       </div>
 
     </div>

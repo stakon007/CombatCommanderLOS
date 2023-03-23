@@ -34,6 +34,7 @@ const state = {
     updateDOM();
   },
   _showLOS: false,
+  _massLosMode: false
 }
 
 const canvasElement = document.getElementById("canvas");
@@ -76,7 +77,7 @@ export function lockHex() {
   if (state.lockedHex) {
     //unlock if already locked and just selects it
     if (state.selectedHex)
-    state.selectedHex.isSelected = false;
+      state.selectedHex.isSelected = false;
     state.lockedHex.isLocked = false;
     state.selectedHex = state.lockedHex;
     state.selectedHex.isSelected = true;
@@ -90,6 +91,33 @@ export function lockHex() {
 
   redrawCanvas();
 }
+export function massLosToggle() {
+
+  state._massLosMode = !state._massLosMode;
+
+  if (state._massLosMode) {
+    //mass Los edit enabled --> allow selection of multiple hexes
+    //reset selections and locks
+    if (state.lockedHex) {
+      if (state.selectedHex)
+        state.selectedHex.isSelected = false;
+      state.lockedHex.isLocked = false;
+      state.selectedHex = null;
+      state.lockedHex = null;
+    } else if (state.selectedHex) {
+      state.selectedHex.isSelected = false;
+      state.selectedHex = null;
+    }
+  }
+  else {
+    //mass Los edit finished
+    processMassLosForSelection();
+    //save all selected hexes into each other's list
+    //deselect everything
+  }
+  redrawCanvas();
+}
+
 //the Hex definition
 function Hex(x, y, radius, color, row = "", column = "") {
   this.x = x;
@@ -196,12 +224,17 @@ function canvasClick(e) {
     if (distanceFromCenter <= hex.radius) {
       if (hex.isLocked) return;
 
-      if (state.selectedHex != null) {
-        state.selectedHex.isSelected = false;
+      if (state._massLosMode) {//in mass lock mode select/deselect multiple cells
+        hex.isSelected = !hex.isSelected;
       }
+      else {
+        if (state.selectedHex != null) {
+          state.selectedHex.isSelected = false;
+        }
 
-      state.selectedHex = hex;
-      hex.isSelected = true;
+        state.selectedHex = hex;
+        hex.isSelected = true;
+      }
 
       redrawCanvas();
 
@@ -242,13 +275,19 @@ export function toggleLOS() {
   redrawCanvas();
 }
 /**
+ * Adds a hex to the other hex's visibility list
+ * If addOnly is true it will not remove from each other's LOS table if already present
  * @param mainHex {Hex}
  * @param hex {Hex}
+  * @param addOnly{boolean}
  */
-function updateVisibility(mainHex, hex) {
+function updateVisibility(mainHex, hex, addOnly = false) {
   //if the hex is already there, remove it
   var index = mainHex.visibleHexes.indexOf(hex);
   if (index > -1) {
+
+    if (addOnly)
+      return;
     // only splice array when item is found
     mainHex.visibleHexes.splice(index, 1); // 2nd parameter means remove one item only
   }
@@ -257,12 +296,14 @@ function updateVisibility(mainHex, hex) {
 
 /**
  * Adds each hex to the other hex's visibility list
+ * If addOnly is true it will not remove from each other's LOS table if already present
  * @param hexA {Hex}
  * @param hexB{Hex}
+ * @param addOnly{boolean}
  */
-function updateReciprocalVisibility(hexA, hexB) {
-  updateVisibility(hexA, hexB);
-  updateVisibility(hexB, hexA);
+function updateReciprocalVisibility(hexA, hexB, addOnly = false) {
+  updateVisibility(hexA, hexB, addOnly);
+  updateVisibility(hexB, hexA, addOnly);
 }
 
 /**
@@ -342,6 +383,11 @@ export function setVisibilityFromJson(jsonData) {
 //updates the DOM based on the current state
 function updateDOM() {
 
+  if (state._massLosMode) {
+    helpText.innerHTML = `Select any number of hexes that have mutual LOS and click MassSelectLos to apply`;
+    return;
+  }
+
   //Update help text
   var txt = state.selectedHex?.name ? `Lock the selected hex to calculate LOS` : "Select a hex to display visibillity.";
   var extraTxt = state.showLOS ? "Right click on other hexes to toggle visibility" : "";
@@ -366,5 +412,22 @@ function updateDOM() {
   txt = state.lockedHex ? `Unlock Hex` : "Lock Selected Hex";
   lockButton.innerHTML = `${txt}`;
   lHex.innerHTML = state.lockedHex?.name ? `${state.lockedHex.name}` : "None";
+
+}
+
+//go through all selected hexes and add mutual LOS to all of them,
+//Then, unselect them.
+function processMassLosForSelection() {
+  var allSelectedHexes = hexes.filter(x => x.isSelected);
+  allSelectedHexes.forEach(mainHex => {
+
+    allSelectedHexes.forEach(h => {
+      if (h == mainHex)
+        return;
+
+      updateReciprocalVisibility(mainHex, h, true);
+    })
+    mainHex.isSelected = false;
+  });
 
 }
