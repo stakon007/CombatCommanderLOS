@@ -110,7 +110,7 @@ function resetCanvas(imagePath) {
   if (!imagePath) {
     imagePath = 'img/europe/01.png'
     currentMapId = "E01";
-    loadLosFromFile('../data/E01.json');
+    loadLosFromFile('data/E01.json');
   }
   img.src = imagePath;
 
