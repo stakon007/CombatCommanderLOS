@@ -23,16 +23,27 @@ function initializeEvents() {
         var imagePath = `img/europe/${this.id.substring(1)}.png`
         resetCanvas(imagePath);
       }
+      else if (this.id[0] == "M") {
+        var imagePath = `img/mediterranean/${this.id.substring(1)}.png`
+        resetCanvas(imagePath);
+      }
     }
 
+    setMapMenuClickHandlers("E", onClick);
+    setMapMenuClickHandlers("M", onClick);
+  }
+
+  //Sets the click handlers for all elements with the given prefix
+  function setMapMenuClickHandlers(prefix, onClick) {
     for (let i = 1; i < 13; i++) {
-      var id = `E0${i}`;
+      var id = `${prefix}0${i}`;
       if (i >= 10)
-        id = `E${i}`;
+        id = `${prefix}${i}`;
 
       document.getElementById(id).onclick = onClick;
     }
   }
+  
 
   //On click --> load and draw new image file
   const fileInput = document.querySelector("#upload");
