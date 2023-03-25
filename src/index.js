@@ -19,18 +19,24 @@ function initializeEvents() {
     const onClick = function () {
       console.log(this.id, this.innerHTML);
       currentMapId = this.id;
-      if (this.id[0] == "E") {
-        var imagePath = `img/europe/${this.id.substring(1)}.png`
-        resetCanvas(imagePath);
-      }
-      else if (this.id[0] == "M") {
-        var imagePath = `img/mediterranean/${this.id.substring(1)}.png`
-        resetCanvas(imagePath);
-      }
+      var folder = "";
+      if (this.id[0] == "E") 
+        folder = "europe";
+      else if (this.id[0] == "M")
+        folder = "mediterranean";
+      else if (this.id[0] == "P") 
+        folder = "pacific";
+      else if (this.id[0] == "R") 
+        folder = "resistance";
+
+      var imagePath = `img/${folder}/${this.id.substring(1)}.png`
+      resetCanvas(imagePath);
     }
 
     setMapMenuClickHandlers("E", onClick);
     setMapMenuClickHandlers("M", onClick);
+    setMapMenuClickHandlers("P", onClick);
+    setMapMenuClickHandlers("R", onClick);
   }
 
   //Sets the click handlers for all elements with the given prefix
