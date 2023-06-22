@@ -2,7 +2,6 @@ import { redrawCanvas } from "./index.js";
 const helpText = document.getElementById("helpText");
 const selHex = document.getElementById("selHex");
 const lHex = document.getElementById("lockedHex");
-const lockButton = document.getElementById("visibility");
 const details = document.getElementById("details");
 const checkBox = document.getElementById("showLOS");
 
@@ -222,7 +221,10 @@ function canvasClick(e) {
     );
 
     if (distanceFromCenter <= hex.radius) {
-      if (hex.isLocked) return;
+      if (hex.isLocked) {//clicking on an already locked hex, unlocks it
+        lockHex();
+        return;
+      }
 
       if (state._massLosMode) {//in mass lock mode select/deselect multiple cells
         hex.isSelected = !hex.isSelected;
@@ -230,6 +232,13 @@ function canvasClick(e) {
       else {
         if (state.selectedHex != null) {
           state.selectedHex.isSelected = false;
+        }
+
+        //
+        if (state.selectedHex == hex && //clicking on an already selected hex locks it
+          !state.lockedHex) {//UNLESS there is another locked hex already.
+          lockHex();
+          return;
         }
 
         state.selectedHex = hex;
@@ -389,7 +398,7 @@ function updateDOM() {
   }
 
   //Update help text
-  var txt = state.selectedHex?.name ? `Lock the selected hex to calculate LOS` : "Select a hex to display visibillity.";
+  var txt = state.selectedHex?.name ? `Click again the selected hex to "lock" it and calculate LOS` : "Select a hex to display visibillity.";
   var extraTxt = state.showLOS ? "Right click on other hexes to toggle visibility" : "";
 
   if (state.lockedHex)
@@ -399,18 +408,14 @@ function updateDOM() {
   selHex.innerHTML = state.selectedHex?.name ? `${state.selectedHex.name}` : "None";
 
   //set elements visibility
-  if (state.selectedHex == null && state.lockedHex == null) {
-    lockButton.style.display = 'none';
+  if (state.selectedHex == null && state.lockedHex == null)
     details.style.display = 'none';
-  }
-  else {
-    lockButton.style.display = 'block';
+  else
     details.style.display = 'block';
-  }
+
 
   //update locked text
   txt = state.lockedHex ? `Unlock Hex` : "Lock Selected Hex";
-  lockButton.innerHTML = `${txt}`;
   lHex.innerHTML = state.lockedHex?.name ? `${state.lockedHex.name}` : "None";
 
 }

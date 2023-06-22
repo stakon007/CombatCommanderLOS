@@ -82,6 +82,12 @@
           <a href="#" id="R12">Map 12: No Quarter</a>
         </div>
       </div>
+      <div class="dropdown">
+        <button class="dropbtn">...</button>
+        <div class="dropdown-content">
+          <a href="#" id="advancedToggle">Toggle LOS Import/Export</a>
+        </div>
+      </div>
 
       <div class="gap"></div>
 
@@ -94,22 +100,22 @@
       <div id="helpText" class="helpText"></div>
 
       <div id="details" style="margin-top: 25px;">
-        <div><button id="visibility" style="float:left;">Lock Selected Hex</button> <input type="checkbox" id="showLOS"
-            style="margin-left: 40px;">Show/Edit visible Hexes</input></div>
-        <br /><br />
         <div>Locked Hex: <span id="lockedHex" class="lockedHex"></span> </div>
         <div>Selected Hex: <span id="selHex" class="selectedHex"></span> </div>
+        <br /><br />
+        <input type="checkbox" id="showLOS">Show/Edit visible Hexes</input>
         <br />
         <br />
         <div class="gap"></div>
-        <button id="exportVisibility">Export LOS</button>
-        <label for="import" id="import-label" class="btn-label">Import LOS</label>
-        <br />
-        <input name="import-label" id="import" type="file" accept="application/JSON" style="display: none;"></input>
+        <div id="advanced" style="display: none;">
+          <button id="exportVisibility">Export LOS</button>
+          <label for="import" id="import-label" class="btn-label">Import LOS</label>
+          <br />
+          <input name="import-label" id="import" type="file" accept="application/JSON" style="display: none;"></input>
 
-        <br><br />
-        <div><button id="massLos" style="float:left;">Mass Select LOS</button></div>
-
+          <br><br />
+          <div><button id="massLos" style="float:left;">Mass Select LOS</button></div>
+        </div>
       </div>
 
     </div>

@@ -5,6 +5,7 @@ const canvasElement = document.getElementById("canvas");
 const context = canvasElement.getContext("2d");
 var currentMapId = "";
 let loadedImage = null;
+const advanced = document.getElementById("advanced");
 
 initializeEvents();
 resetCanvas();
@@ -20,13 +21,13 @@ function initializeEvents() {
       console.log(this.id, this.innerHTML);
       currentMapId = this.id;
       var folder = "";
-      if (this.id[0] == "E") 
+      if (this.id[0] == "E")
         folder = "europe";
       else if (this.id[0] == "M")
         folder = "mediterranean";
-      else if (this.id[0] == "P") 
+      else if (this.id[0] == "P")
         folder = "pacific";
-      else if (this.id[0] == "R") 
+      else if (this.id[0] == "R")
         folder = "resistance";
 
       var imagePath = `img/${folder}/${this.id.substring(1)}.png`
@@ -37,6 +38,13 @@ function initializeEvents() {
     setMapMenuClickHandlers("M", onClick);
     setMapMenuClickHandlers("P", onClick);
     setMapMenuClickHandlers("R", onClick);
+    document.getElementById("advancedToggle").onclick = () => {
+      if (advanced.style.display == 'none') 
+        advanced.style.display = 'block';
+      else 
+        advanced.style.display = 'none';
+    };
+
   }
 
   //Sets the click handlers for all elements with the given prefix
@@ -49,7 +57,7 @@ function initializeEvents() {
       document.getElementById(id).onclick = onClick;
     }
   }
-  
+
 
   //On click --> load and draw new image file
   const fileInput = document.querySelector("#upload");
@@ -93,13 +101,6 @@ function initializeEvents() {
     resetGrid(canvas.width, canvas.height);
   };
 
-  //On click --> locks selected hex, if any.
-  const calcVisibility = document.getElementById("visibility");
-  calcVisibility.onclick = () => {
-    lockHex();
-    //next selections draw/undraw lines between locked and selected hex 
-    //right click on a hex, adds/remove it from the visibility list
-  };
 
   //On click --> saves current visibility data of all hexes into a json file.
   const exportVisibility = document.getElementById("exportVisibility");
@@ -127,8 +128,11 @@ function resetCanvas(imagePath) {
   if (!imagePath) {
     imagePath = 'img/europe/01.png'
     currentMapId = "E01";
-    loadLosFromFile('data/E01.json');
   }
+
+  if (imagePath == 'img/europe/01.png')
+    loadLosFromFile('data/E01.json');
+
   img.src = imagePath;
 
   var checkBox = document.getElementById("showLOS");
