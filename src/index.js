@@ -117,21 +117,21 @@ function initializeEvents() {
 }
 //A new image and a new grid are drawn on the canvas
 function resetCanvas(imagePath) {
+  if (!imagePath) {
+    imagePath = 'img/europe/01.png'
+    currentMapId = "E01";
+  }
+
+  //LOS data is loaded after the grid is drawn, otherwise resetGrid wipes it
+  var losPath = `data/${currentMapId}.json`;
   var img = new Image();
   img.onload = function () {
     loadedImage = img;
 
     drawImageOnCanvas(img);
     resetGrid(canvas.width, canvas.height);
+    loadLosFromFile(losPath);
   };
-
-  if (!imagePath) {
-    imagePath = 'img/europe/01.png'
-    currentMapId = "E01";
-  }
-
-  if (imagePath == 'img/europe/01.png')
-    loadLosFromFile('data/E01.json');
 
   img.src = imagePath;
 
@@ -139,12 +139,13 @@ function resetCanvas(imagePath) {
   checkBox.checked = false;
 }
 
+//maps without a data file keep the default (adjacent hexes only) visibility
 function loadLosFromFile(fileToLoad) {
   fetch(fileToLoad)
-    .then((res) => res.text())
+    .then((res) => res.ok ? res.text() : null)
     .then((data) => {
-      setVisibilityFromJson(data);
-
+      if (data)
+        setVisibilityFromJson(data);
     });
 }
 
